@@ -1,4 +1,20 @@
+"use client"
+
+import Image from "next/image";
+import { ChangeEvent, useState } from "react";
+
 export default function Home() {
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string>("");
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if(!file) return;
+
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-green-50 text-gray-800 pb-10">
       <nav className="w-full py-4 px-10 shadow-sm bg-white flex items-center justify-between">
@@ -101,20 +117,45 @@ export default function Home() {
         <h1 className="font-semibold text-[22px] mb-4 text-center text-green-700">
           Upload Gambar Kulit
         </h1>
-        <div className="w-full flex flex-col justify-center items-center py-8 border-2 border-dashed border-green-300 rounded-xl bg-green-50 hover:bg-green-100 cursor-pointer transition">
-          <svg xmlns="http://www.w3.org/2000/svg" width="55" height="55" viewBox="0 0 24 24">
-            <path
-              fill="#4caf50"
-              d="M5.23 20q-.666 0-1.14-.475q-.475-.474-.475-1.14V5.615q0-.666.475-1.14Q4.564 4 5.23 4h7.885q.213 0 .357.144q.143.144.143.357q0 .212-.143.356q-.144.143-.357.143H5.231q-.27 0-.443.173t-.173.442v12.77q0 .269.173.442q.174.173.443.173H18q.27 0 .442-.173t.173-.442V10.5q0-.213.144-.356t.357-.144q.213 0 .356.144t.143.356v7.885q0 .666-.474 1.14Q18.666 20 18 20H5.23ZM17.386 6.23h-1.5q-.213 0-.357-.143t-.143-.357q0-.213.143-.356q.144-.143.357-.143h1.5v-1.5q0-.213.144-.356q.143-.144.356-.144t.356.144q.144.143.144.356v1.5h1.5q.212 0 .356.144t.144.356q0 .213-.144.356q-.144.144-.356.144h-1.5v1.5q0 .212-.144.356t-.357.144q-.213 0-.356-.144t-.143-.356v-1.5Zm-6.558 9.808L9.4 14.313q-.13-.142-.313-.142t-.314.162l-1.154 1.52q-.161.212-.045.43q.116.217.35.217h7.538q.232 0 .349-.217q.116-.218-.026-.43l-2.02-2.713q-.13-.161-.323-.161q-.192 0-.324.166l-2.291 2.893ZM11.615 12Z"
-            />
-          </svg>
-          <h1 className="font-semibold text-xl mt-3 text-gray-700">Klik atau Drag & Drop</h1>
-          <p className="text-gray-600 my-1">gambar kulit anda untuk dianalisis</p>
-          <p className="text-sm text-gray-500">Format: PNG, JPG, JPEG (max. 10MB)</p>
-        </div>
-        <button className="w-full py-3 mt-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition">
-          Analisis Gambar
-        </button>
+        <label htmlFor="file-upload" className="w-full flex flex-col justify-center items-center py-8 border-2 border-dashed border-green-300 rounded-xl bg-green-50 hover:bg-green-100 cursor-pointer transition">
+          {preview ? (
+            <>
+              <Image
+                src={preview}
+                alt="Preview"
+                height={0}
+                width={0}
+                className="object-cover rounded-xl mb-3"
+                style={{ width: "auto", height: "220px"}}
+              />
+              <p className="text-gray-700 font-medium text-center">
+                {image?.name}
+              </p>
+            </>
+          ) : (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" width="55" height="55" viewBox="0 0 24 24">
+              <path
+                fill="#4caf50"
+                d="M5.23 20q-.666 0-1.14-.475q-.475-.474-.475-1.14V5.615q0-.666.475-1.14Q4.564 4 5.23 4h7.885q.213 0 .357.144q.143.144.143.357q0 .212-.143.356q-.144.143-.357.143H5.231q-.27 0-.443.173t-.173.442v12.77q0 .269.173.442q.174.173.443.173H18q.27 0 .442-.173t.173-.442V10.5q0-.213.144-.356t.357-.144q.213 0 .356.144t.143.356v7.885q0 .666-.474 1.14Q18.666 20 18 20H5.23ZM17.386 6.23h-1.5q-.213 0-.357-.143t-.143-.357q0-.213.143-.356q.144-.143.357-.143h1.5v-1.5q0-.213.144-.356q.143-.144.356-.144t.356.144q.144.143.144.356v1.5h1.5q.212 0 .356.144t.144.356q0 .213-.144.356q-.144.144-.356.144h-1.5v1.5q0 .212-.144.356t-.357.144q-.213 0-.356-.144t-.143-.356v-1.5Zm-6.558 9.808L9.4 14.313q-.13-.142-.313-.142t-.314.162l-1.154 1.52q-.161.212-.045.43q.116.217.35.217h7.538q.232 0 .349-.217q.116-.218-.026-.43l-2.02-2.713q-.13-.161-.323-.161q-.192 0-.324.166l-2.291 2.893ZM11.615 12Z"
+              />
+              </svg>
+              <h1 className="font-semibold text-xl mt-3 text-gray-700">Klik atau Drag & Drop</h1>
+              <p className="text-gray-600 my-1">gambar kulit anda untuk dianalisis</p>
+              <p className="text-sm text-gray-500">Format: PNG, JPG, JPEG (max. 5MB)</p>
+            </>
+          )}
+        </label>
+        <input id="file-upload" type="file" accept="image/*" onChange={handleFileChange} className="hidden"/>
+        {preview ? (
+          <button className="w-full py-3 mt-4 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 transition">
+            Analisis Gambar
+          </button>
+        ) : (
+          <button className="w-full py-3 mt-4 bg-green-300 text-white font-bold rounded-xl transition" disabled>
+            Upload Gambar Terlebih Dahulu
+          </button>
+        )}
       </div>
 
       <div className="flex-1 mx-10 mt-10 bg-white border border-gray-100 shadow-md rounded-2xl p-8 transition hover:shadow-xl">
